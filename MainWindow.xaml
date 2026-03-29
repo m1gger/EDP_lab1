@@ -1,6 +1,7 @@
 <Window x:Class="LabWork1.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LabWork1"
         Title="Обработка экспериментальных данных" Height="720" Width="960"
         MinHeight="600" MinWidth="800"
         WindowStartupLocation="CenterScreen">
@@ -70,6 +71,8 @@
             <Setter Property="Margin" Value="0,6,0,0"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
+
+        <local:BoolToBackgroundConverter x:Key="BoolToBackgroundConverter"/>
     </Window.Resources>
 
     <Grid>
@@ -245,41 +248,37 @@
                     <Border Grid.Column="0" Style="{StaticResource SectionBorder}" Margin="0,0,8,0">
                         <DockPanel>
                             <TextBlock DockPanel.Dock="Top" Style="{StaticResource SectionTitle}"
-                                       Text="40 измерений"/>
+                                       Text="40 измерений (кликните на строку)"/>
                             <DataGrid x:Name="DgMeasurements"
                                       AutoGenerateColumns="False"
                                       CanUserAddRows="False"
                                       CanUserDeleteRows="False"
                                       IsReadOnly="True"
                                       GridLinesVisibility="Horizontal"
-                                      AlternatingRowBackground="#EEF2FF"
                                       BorderThickness="1"
                                       BorderBrush="#C0C8DC"
                                       FontSize="12"
-                                      SelectionMode="Single">
+                                      SelectionMode="Single"
+                                      SelectionChanged="DgMeasurements_SelectionChanged">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="№" Binding="{Binding Index}"
                                                         Width="38" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="X" Binding="{Binding Value, StringFormat=F1}"
                                                         Width="*" IsReadOnly="True"/>
-                                    <DataGridTemplateColumn Header="" Width="18">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Ellipse Width="10" Height="10"
-                                                         Fill="{Binding HighlightColor}"
-                                                         ToolTip="{Binding HighlightTip}"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Метод" Binding="{Binding OutlierMethods}" Width="50">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Setter Property="TextAlignment" Value="Center"/>
+                                                <Setter Property="Foreground" Value="{Binding MethodIndicatorColor}"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
                                 </DataGrid.Columns>
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsOutlierCandidate}" Value="True">
-                                                <Setter Property="Background" Value="#FFE0E0"/>
-                                                <Setter Property="FontWeight" Value="Bold"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
+                                        <Setter Property="Background" 
+                                                Value="{Binding IsOutlierCandidate, Converter={StaticResource BoolToBackgroundConverter}}"/>
                                     </Style>
                                 </DataGrid.RowStyle>
                             </DataGrid>
@@ -335,7 +334,7 @@
                                         <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TbStatStd"
                                                    VerticalAlignment="Center" FontFamily="Consolas"/>
                                         <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"
-                                                   Text="Кандидат на промах:"/>
+                                                   Text="Результаты анализа:"/>
                                         <TextBlock Grid.Row="3" Grid.Column="1" x:Name="TbStatXmax"
                                                    VerticalAlignment="Center" FontFamily="Consolas"
                                                    Foreground="#C03030" FontWeight="Bold"/>
@@ -350,7 +349,8 @@
                                                Text="Метод I — Критерий на основе распределения Стьюдента"/>
                                     <TextBlock Foreground="#555" FontStyle="Italic" TextWrapping="Wrap"
                                                Margin="0,0,0,8"
-                                               Text="u = (Xmax − X̄) / S;   сравнить u с квантилью t(v, q=1−α), v = n−1"/>
+                                               x:Name="TbM1Formula"
+                                               Text="u = (Xi − X̄) / S;   сравнить u с квантилью t(v, q=1−α), v = n−1"/>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="160"/>
