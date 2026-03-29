@@ -1,0 +1,439 @@
+<Window x:Class="LabWork1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Обработка экспериментальных данных" Height="720" Width="960"
+        MinHeight="600" MinWidth="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="SectionBorder" TargetType="Border">
+            <Setter Property="Background" Value="#F5F7FA"/>
+            <Setter Property="BorderBrush" Value="#D0D7E3"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E6B"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="LabelTb" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="Foreground" Value="#333"/>
+        </Style>
+
+        <Style x:Key="InputBox" TargetType="TextBox">
+            <Setter Property="Width" Value="90"/>
+            <Setter Property="Padding" Value="4,3"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#B0B8C8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="CalcBtn" TargetType="Button">
+            <Setter Property="Padding" Value="14,5"/>
+            <Setter Property="Background" Value="#3A6BCC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2A55B5"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#1E459A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ResultText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#1A5C2A"/>
+            <Setter Property="Margin" Value="0,6,0,0"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <Border Grid.Row="0" Background="#2C3E6B" Padding="16,10">
+            <TextBlock Text="Обработка экспериментальных данных на ЭВМ"
+                       FontSize="16" FontWeight="Bold" Foreground="White"/>
+        </Border>
+
+        <!-- Вкладки -->
+        <TabControl Grid.Row="1" Margin="8" TabStripPlacement="Top">
+
+            <!-- ═══════════════════════════════════════════════════════
+                 ВКЛ. 1: Статистические функции
+            ═══════════════════════════════════════════════════════ -->
+            <TabItem Header="  Статистические функции  ">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="8">
+                    <StackPanel>
+
+                        <!-- 1. Среднее и дисперсия -->
+                        <Border Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="1. Математическое ожидание и дисперсия"/>
+                                <TextBlock Foreground="#555" FontStyle="Italic" Margin="0,0,0,8"
+                                           Text="M = (1/N)·ΣX(i),    D = (1/N)·Σ(X(i)−M)²"/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource LabelTb}"
+                                               Text="X(i) через пробел или запятую:"/>
+                                    <TextBox x:Name="TbArray1" Width="340" Style="{StaticResource InputBox}"
+                                             ToolTip="Например: 1.5 2.3 4.0 3.7"/>
+                                    <Button Content="Вычислить" Style="{StaticResource CalcBtn}"
+                                            Margin="8,0,0,0" Click="CalcMeanVariance_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="TbResult1" Style="{StaticResource ResultText}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 2. Плотность вероятности -->
+                        <Border Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="2. Плотность вероятности f(X) нормального распределения"/>
+                                <TextBlock Foreground="#555" FontStyle="Italic" Margin="0,0,0,8"
+                                           Text="f(X) = 1/(σ·√(2π)) · exp(−(X−M)² / (2σ²))"/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource LabelTb}" Text="X:"/>
+                                    <TextBox x:Name="TbPdf_X" Style="{StaticResource InputBox}" Text="0"/>
+                                    <TextBlock Style="{StaticResource LabelTb}" Margin="10,0,6,0" Text="M:"/>
+                                    <TextBox x:Name="TbPdf_M" Style="{StaticResource InputBox}" Text="0"/>
+                                    <TextBlock Style="{StaticResource LabelTb}" Margin="10,0,6,0" Text="σ²:"/>
+                                    <TextBox x:Name="TbPdf_Sigma2" Style="{StaticResource InputBox}" Text="1"/>
+                                    <Button Content="Вычислить" Style="{StaticResource CalcBtn}"
+                                            Margin="8,0,0,0" Click="CalcPDF_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="TbResult2" Style="{StaticResource ResultText}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 3. Функция распределения -->
+                        <Border Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="3. Функция распределения F(X) гауссовской СВ"/>
+                                <TextBlock Foreground="#555" FontStyle="Italic" Margin="0,0,0,8"
+                                           Text="F(X) = 1 − ½·(1 + d₁X + d₂X² + … + d₆X⁶)⁻¹⁶"/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource LabelTb}" Text="X:"/>
+                                    <TextBox x:Name="TbCdf_X" Style="{StaticResource InputBox}" Text="1"/>
+                                    <Button Content="Вычислить" Style="{StaticResource CalcBtn}"
+                                            Margin="8,0,0,0" Click="CalcCDF_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="TbResult3" Style="{StaticResource ResultText}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 4. Квантиль гауссовского -->
+                        <Border Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="4. Квантиль λ_q гауссовского распределения"/>
+                                <TextBlock Foreground="#555" FontStyle="Italic" Margin="0,0,0,8"
+                                           Text="λq = t − (c₀+c₁t+c₂t²)/(1+d₁t+d₂t²+d₃t³),   t=√ln(α⁻²), α=1−q"/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource LabelTb}" Text="q (вероятность):"/>
+                                    <TextBox x:Name="TbGQ_q" Style="{StaticResource InputBox}" Text="0.975"/>
+                                    <Button Content="Вычислить" Style="{StaticResource CalcBtn}"
+                                            Margin="8,0,0,0" Click="CalcGaussQuantile_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="TbResult4" Style="{StaticResource ResultText}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 5. Квантиль Стьюдента -->
+                        <Border Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="5. Квантиль t_{v,q} распределения Стьюдента"/>
+                                <TextBlock Foreground="#555" FontStyle="Italic" Margin="0,0,0,8"
+                                           Text="t(v,q) = λq + q₁/v + q₂/v² + q₃/v³ + q₄/v⁴"/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource LabelTb}" Text="v (степени свободы):"/>
+                                    <TextBox x:Name="TbSt_v" Style="{StaticResource InputBox}" Text="39"/>
+                                    <TextBlock Style="{StaticResource LabelTb}" Margin="10,0,6,0" Text="q:"/>
+                                    <TextBox x:Name="TbSt_q" Style="{StaticResource InputBox}" Text="0.975"/>
+                                    <Button Content="Вычислить" Style="{StaticResource CalcBtn}"
+                                            Margin="8,0,0,0" Click="CalcStudentQuantile_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="TbResult5" Style="{StaticResource ResultText}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 6. Квантиль хи-квадрат -->
+                        <Border Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="6. Квантиль χ²_{v,q} хи-квадрат распределения"/>
+                                <TextBlock Foreground="#555" FontStyle="Italic" Margin="0,0,0,8"
+                                           Text="χ²(v,q) = v · (1 − 2/(9v) + λq · √(2/(9v)))³"/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource LabelTb}" Text="v:"/>
+                                    <TextBox x:Name="TbChi_v" Style="{StaticResource InputBox}" Text="10"/>
+                                    <TextBlock Style="{StaticResource LabelTb}" Margin="10,0,6,0" Text="q:"/>
+                                    <TextBox x:Name="TbChi_q" Style="{StaticResource InputBox}" Text="0.95"/>
+                                    <Button Content="Вычислить" Style="{StaticResource CalcBtn}"
+                                            Margin="8,0,0,0" Click="CalcChiSquareQuantile_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="TbResult6" Style="{StaticResource ResultText}"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 7. Квантиль Фишера -->
+                        <Border Style="{StaticResource SectionBorder}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionTitle}"
+                                           Text="7. Квантиль F_{v1,v2,q} распределения Фишера"/>
+                                <TextBlock Foreground="#555" FontStyle="Italic" Margin="0,0,0,8"
+                                           Text="F = exp(2w),   H = 2(v1−1)(v2−1)/(v1+v2−2),   L = (λq²−3)/6"/>
+                                <WrapPanel VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource LabelTb}" Text="v1:"/>
+                                    <TextBox x:Name="TbFish_v1" Style="{StaticResource InputBox}" Text="10"/>
+                                    <TextBlock Style="{StaticResource LabelTb}" Margin="10,0,6,0" Text="v2:"/>
+                                    <TextBox x:Name="TbFish_v2" Style="{StaticResource InputBox}" Text="10"/>
+                                    <TextBlock Style="{StaticResource LabelTb}" Margin="10,0,6,0" Text="q:"/>
+                                    <TextBox x:Name="TbFish_q" Style="{StaticResource InputBox}" Text="0.95"/>
+                                    <Button Content="Вычислить" Style="{StaticResource CalcBtn}"
+                                            Margin="8,0,0,0" Click="CalcFisherQuantile_Click"/>
+                                </WrapPanel>
+                                <TextBlock x:Name="TbResult7" Style="{StaticResource ResultText}"/>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 ВКЛ. 2: Лаб. работа №1
+            ═══════════════════════════════════════════════════════ -->
+            <TabItem Header="  Лаб. работа №1 — Анализ промахов  ">
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="230"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Левая: таблица измерений -->
+                    <Border Grid.Column="0" Style="{StaticResource SectionBorder}" Margin="0,0,8,0">
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Top" Style="{StaticResource SectionTitle}"
+                                       Text="40 измерений"/>
+                            <DataGrid x:Name="DgMeasurements"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      IsReadOnly="True"
+                                      GridLinesVisibility="Horizontal"
+                                      AlternatingRowBackground="#EEF2FF"
+                                      BorderThickness="1"
+                                      BorderBrush="#C0C8DC"
+                                      FontSize="12"
+                                      SelectionMode="Single">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="№" Binding="{Binding Index}"
+                                                        Width="38" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="X" Binding="{Binding Value, StringFormat=F1}"
+                                                        Width="*" IsReadOnly="True"/>
+                                    <DataGridTemplateColumn Header="" Width="18">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Ellipse Width="10" Height="10"
+                                                         Fill="{Binding HighlightColor}"
+                                                         ToolTip="{Binding HighlightTip}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOutlierCandidate}" Value="True">
+                                                <Setter Property="Background" Value="#FFE0E0"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                            </DataGrid>
+                        </DockPanel>
+                    </Border>
+
+                    <!-- Правая: параметры + результаты -->
+                    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+
+                            <!-- Параметры -->
+                            <Border Style="{StaticResource SectionBorder}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitle}"
+                                               Text="Параметры анализа"/>
+                                    <WrapPanel VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource LabelTb}"
+                                                   Text="Уровень значимости α:"/>
+                                        <TextBox x:Name="TbAlpha" Width="70" Style="{StaticResource InputBox}"
+                                                 Text="0.05"/>
+                                        <Button Content="  Выполнить анализ  " Style="{StaticResource CalcBtn}"
+                                                Margin="12,0,0,0" Click="RunOutlierAnalysis_Click"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Описательная статистика -->
+                            <Border Style="{StaticResource SectionBorder}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitle}"
+                                               Text="Описательная статистика (все 40 измерений)"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="Среднее X̄:"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TbStatMean"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="Выб. дисперсия S²:"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="TbStatVar"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="СКО S:"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TbStatStd"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="Кандидат на промах:"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="TbStatXmax"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"
+                                                   Foreground="#C03030" FontWeight="Bold"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Метод I -->
+                            <Border Style="{StaticResource SectionBorder}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitle}"
+                                               Text="Метод I — Критерий на основе распределения Стьюдента"/>
+                                    <TextBlock Foreground="#555" FontStyle="Italic" TextWrapping="Wrap"
+                                               Margin="0,0,0,8"
+                                               Text="u = (Xmax − X̄) / S;   сравнить u с квантилью t(v, q=1−α), v = n−1"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="u = (Xmax−X̄) / S:"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TbM1_u"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="v = n−1:"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="TbM1_v"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="t(v, 1−α):"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TbM1_t"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="Вывод:"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="TbM1_Conclusion"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"
+                                                   FontWeight="Bold" TextWrapping="Wrap" Margin="0,4,0,4"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Метод II -->
+                            <Border Style="{StaticResource SectionBorder}">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionTitle}"
+                                               Text="Метод II — Коэффициент Ки"/>
+                                    <TextBlock Foreground="#555" FontStyle="Italic" TextWrapping="Wrap"
+                                               Margin="0,0,0,8"
+                                               Text="Вычислить X̄* и S* без Xmax;   Ki = (Xmax − X̄*) / S*;   промах если Ki &gt; 4"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="24"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="X̄* (без Xmax):"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TbM2_Mean"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="S²* (без Xmax):"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="TbM2_Var"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="S* (без Xmax):"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TbM2_Std"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="Ki = (Xmax−X̄*)/S*:"/>
+                                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="TbM2_Ki"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"
+                                                   Text="Вывод:"/>
+                                        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="TbM2_Conclusion"
+                                                   VerticalAlignment="Center" FontFamily="Consolas"
+                                                   FontWeight="Bold" TextWrapping="Wrap" Margin="0,4,0,4"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Grid>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Window>
